@@ -1,6 +1,6 @@
-from RenderLib.RenderLibC import *
+from RenderLib.RenderLib import *
 
-w,h = 1200,720
+w,h = 1280,720
 
 Obj = Mesh.LoadMesh("OBJ/sphere2.obj")
 
