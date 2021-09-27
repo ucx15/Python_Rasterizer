@@ -1,3 +1,6 @@
+import pyximport
+pyximport.install()
+
 import pygame
 from SceneFile2 import RenderScene,Anim
 from RenderLib.RenderLib import Render
