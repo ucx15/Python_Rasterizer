@@ -1,4 +1,4 @@
-from RenderLib.RenderLibC import *
+from RenderLib.RenderLib import *
 
 w,h = 720,720
 
