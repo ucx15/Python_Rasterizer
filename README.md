@@ -29,7 +29,7 @@ I've also implemented it in Cython, check that branch `Cython_Ver`. Cython code 
 * OBJ import support (only triangluar geometry is supported for now)
 
 ## ChangeLog
-###Sept 28,2021
+### Sept 28,2021
     * Initial Commit (see Features)
 
 ## Editing Scenes
