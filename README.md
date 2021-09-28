@@ -28,6 +28,9 @@ I've also implemented it in Cython, check that branch `Cython_Ver`. Cython code 
 * Real-time Profiling
 * OBJ import support (only triangluar geometry is supported for now)
 
+![Multiple Geometry](https://github.com/udit-uc828/Python_Rasterizer/blob/890ac0133cb07b237d73b98d734a555226b27df7/Images/0.006014347076416016.png)
+![Teapot Classic](https://github.com/udit-uc828/Python_Rasterizer/blob/890ac0133cb07b237d73b98d734a555226b27df7/Images/0.23740768432617188.png)
+![Torus Sphere](https://github.com/udit-uc828/Python_Rasterizer/blob/890ac0133cb07b237d73b98d734a555226b27df7/Images/0.018141746520996094.png)
 ## ChangeLog
 ### Sept 28,2021
     * Initial Commit (see Features)
