@@ -1,15 +1,13 @@
 from RenderLib.RenderLib import *
 
-w,h = 720,720
+w,h = 1600,720
 
 Obj = Mesh.LoadMesh("OBJ/teapot.obj")
 
-Obj.mat.color = Color(1,0,0)
 Obj.Rotation = [30,0,0]
-Obj.Scale = [1/1.5]*3
+Obj.Scale = [1/1.3]*3
 Obj.Translate = [0,0,6]
-
-Obj.mat = Material(color=Color(1,0,.08),spec=1)
+Obj.mat = Material(color=Color(0,0.2,1),spec=1)
 
 camr = Camera(Vec(), 60)
 
