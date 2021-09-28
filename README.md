@@ -39,4 +39,7 @@ I know this is not enough to explain but I'll be writing doc-strings in each eve
 
 ## Contributions 
 If you like this Project, and want to improve something in it, or just want to reimplement this from your perspective (any class/function/algorithm or whole project), feel free to do.. It will be very appreciated!
-We're going to take over the VFX industry with this 🙂
+
+If you find any bug or issues, please report it in the issue section.
+
+And we are going to take over the VFX industry with this 🙂, so support
