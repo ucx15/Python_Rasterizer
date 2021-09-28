@@ -3,7 +3,7 @@ from RenderLib.RenderLib import *
 w,h = 1600,720
 
 Obj = Mesh.LoadMesh("OBJ/torus.obj")
-Obj = Mesh.LoadMesh("OBJ/sphere.obj")
+Obj2 = Mesh.LoadMesh("OBJ/sphere.obj")
 
 Obj.Rotation = [-10,0,0]
 Obj.Translate = [0,.3,6]
