@@ -135,7 +135,7 @@ cdef class Mesh:
 		self.Rotation = [0,0,0]
 		self.Scale = [1,1,1]		
 		self.PreTranslate = [0,0,0]
-		self.Translate = [0,0,5]
+		self.Translate = [0,0,6]
 	
 	@staticmethod
 	def LoadMesh(path,norm=1):
@@ -507,7 +507,7 @@ def Render(PG, Scene UserScene, list RotAn):
 
 		Surface.blit(fpsLab, (20, Sze[1]-220))
 		Surface.blit(timerLab, (20, Sze[1]-200))
-
+				
 		Display.update()
 		
 
