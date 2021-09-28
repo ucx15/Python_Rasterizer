@@ -117,7 +117,9 @@ class Mesh:
 		
 		self.Rotation = [0,0,0]
 		self.Scale = [1,1,1]
-		self.Translate = [0,0,5]
+		
+		self.PreTranslate = [0,0,0]
+		self.Translate = [0,0,6]
 	
 	@staticmethod
 	def LoadMesh(path,norm=1):
@@ -215,8 +217,8 @@ def PersMatrixGen(fov, AsR, zN, zF):
 def RotMatrixGen(AnTup):
 	a1,a2,a3 = map(radians,AnTup)
 	return (Vec((cos(a2)*cos(a3)),(cos(a2)*sin(a3)),(-sin(a2))),
-		Vec((sin(a1)*sin(a2)*cos(a3) - cos(a1)*sin(a3)),(sin(a1)*sin(a2)*sin(a3)+cos(a1)*cos(a3)),(sin(a1)*cos(a2))),
-		Vec((cos(a1)*sin(a2)*cos(a3) - sin(a1)*sin(a3)),(cos(a1)*sin(a2)*sin(a3)-sin(a1)*cos(a3)),(cos(a1)*cos(a2))))
+			Vec((sin(a1)*sin(a2)*cos(a3) - cos(a1)*sin(a3)),(sin(a1)*sin(a2)*sin(a3)+cos(a1)*cos(a3)),(sin(a1)*cos(a2))),
+			Vec((cos(a1)*sin(a2)*cos(a3) - sin(a1)*sin(a3)),(cos(a1)*sin(a2)*sin(a3)-sin(a1)*cos(a3)),(cos(a1)*cos(a2))))
 
 
 def Transform(O,Anim,NrmOp,cmra):
@@ -225,7 +227,10 @@ def Transform(O,Anim,NrmOp,cmra):
 	RotATup[1] += Anim[1]
 	RotATup[2] += Anim[2]
 	
-	sx,sy,sz = O.Scale				
+	sx,sy,sz = O.Scale
+	PreTrV = Vec(O.PreTranslate[0],
+				O.PreTranslate[1],
+				O.PreTranslate[2])
 	tx,ty,tz = O.Translate		
 	r1,r2,r3 = RotMatrixGen(RotATup)
 	LocTrisDic = {}
@@ -233,11 +238,11 @@ def Transform(O,Anim,NrmOp,cmra):
 	
 	for T in O.triangles:	
 		#_Transformation
-		a,b,c = T.a,T.b,T.c
+		a,b,c = T.a+PreTrV, T.b+PreTrV, T.c+PreTrV
 		FinalTris = Triangle(
-			(Vec(r1.dot(a)*sx+tx,r2.dot(a)*sy+ty,r3.dot(a)*sz+tz) ),
-			(Vec(r1.dot(b)*sx+tx,r2.dot(b)*sy+ty,r3.dot(b)*sz+tz) ),
-			(Vec(r1.dot(c)*sx+tx,r2.dot(c)*sy+ty,r3.dot(c)*sz+tz) ))
+					(Vec(r1.dot(a)*sx+tx,r2.dot(a)*sy+ty,r3.dot(a)*sz+tz) ),
+					(Vec(r1.dot(b)*sx+tx,r2.dot(b)*sy+ty,r3.dot(b)*sz+tz) ),
+					(Vec(r1.dot(c)*sx+tx,r2.dot(c)*sy+ty,r3.dot(c)*sz+tz) ))
 
 		#_Apply_Colors
 		FinalTris.mat = mt
@@ -259,14 +264,14 @@ def Project(PM,tr,cx,cy,Scl,Typ):
 	
 	if Typ:
 		Px1,Py1,Pz1 = (PM[0]*p1.i,
-				PM[1]*p1.j,
-				PM[2]*p1.k - PM[3])
+						PM[1]*p1.j,
+						PM[2]*p1.k - PM[3])
 		Px2,Py2,Pz2 = (PM[0]*p2.i,
-				PM[1]*p2.j,
-				PM[2]*p2.k - PM[3])
+						PM[1]*p2.j,
+						PM[2]*p2.k - PM[3])
 		Px3,Py3,Pz3 = (PM[0]*p3.i,
-				PM[1]*p3.j,
-				PM[2]*p3.k - PM[3])
+						PM[1]*p3.j,
+						PM[2]*p3.k - PM[3])
 
 		if p1.k:
 			z1 = 1/p1.k
@@ -285,9 +290,9 @@ def Project(PM,tr,cx,cy,Scl,Typ):
 
 	else:
 		return (
-			Vec(p1.i*Scl + cx, cy-p1.j*Scl),
-			Vec(p2.i*Scl + cx, cy-p2.j*Scl),
-			Vec(p3.i*Scl + cx, cy-p3.j*Scl))
+				Vec(p1.i*Scl + cx, cy-p1.j*Scl),
+				Vec(p2.i*Scl + cx, cy-p2.j*Scl),
+				Vec(p3.i*Scl + cx, cy-p3.j*Scl))
 
 
 
@@ -368,13 +373,13 @@ def Render(PG,UserScene,RotAn):
 		NOpt = False
 	
 	VColor,EColor = (UserScene.VertColor,
-			UserScene.EdgeColor)
+					UserScene.EdgeColor)
 
 		
 	PersMatrix = PersMatrixGen(Cam.fov,
-				(UserScene.H/UserScene.W),
-				UserScene.NearPoint,
-				UserScene.FarPoint)
+							(UserScene.H/UserScene.W),
+							UserScene.NearPoint,
+							UserScene.FarPoint)
 
 
 	while True:
@@ -430,7 +435,7 @@ def Render(PG,UserScene,RotAn):
 		t2 = time()
 
 
-		#__PROFILING__
+		#__PERFORMANCE__
 		tt = (t2-t1)
 		TransT = round((tTrans2-tTrans1)*100,3)
 		tPrj = round(tPrj*100,3)
@@ -442,10 +447,10 @@ def Render(PG,UserScene,RotAn):
 		
 		fpsLab = myfont.render(f"{ttris}Tri  {fps}fps  {round((tt*100),2)}:Elapsed", 1, (255,255,0))
 		timerLab = myfont.render(f"{TransT}:Transform  {tPrj}:Projection  {tLgt}:Lighting  {RastT}:Rendering", 1, (255,255,0))	
-
+		
 		Surface.blit(fpsLab, (20, Sze[1]-220))
 		Surface.blit(timerLab, (20, Sze[1]-200))
-
+		
 		Display.update()
 
 #		break
