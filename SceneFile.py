@@ -1,6 +1,6 @@
 from RenderLib.RenderLib import *
 
-w,h = 720,720
+w,h = 1600,720
 
 Obj = Mesh.LoadMesh("OBJ/teapot.obj")
 
