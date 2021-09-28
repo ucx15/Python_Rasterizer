@@ -17,15 +17,9 @@ This is the Cython implementation you're looking for
 * You can either use pyximport or build the `renderlib.pyx` file using cython compiler
 * Changes in the scene can be made by editing `scenefile.py` or `scenefile2.py`, whichever is imported in `main.py`
 
-## Features
-* Perspective and Orthographic Projection
-* Rotation, Translation and Scale
-* Real-time Preview using PyGame
-* Diffuse and Specular Shading
-* Directional and Point Lighting
-* Real-time Profiling
-* OBJ import support (only triangluar geometry is supported for now)
+## Other Stuff!
+>This is a branch of main repo-
+https://github.com/udit-uc828/Python_Rasterizer
+Please check main repo for features and other information
 
-## ChangeLog
-### Sept 28,2021
-    * Initial Commit (see Features)
+:)
