@@ -121,48 +121,62 @@ class Mesh:
 		self.PreTranslate = Vec(0,0,0)
 		self.Translate = Vec(0,0,6)
 	
+	def Origin(self):
+		CV = Vec()
+		for T in self.triangles:
+			CV = CV + T.center()
+		CV = CV/len(self.triangles)
+		return CV
+	
 	@staticmethod
 	def LoadMesh(path,norm=1):
 		verts = []
 		tris = []
-		ctr = 0
+
 		with open(path, "r") as file:
 			Lines = file.readlines()
 			file.close()
 	
 		for Line in Lines:
 			if Line.startswith("v "):
-				a,b,c = list(map(float,(Line[2::]).split()))
-				verts.append(Vec(a,b,c))
+				x,y,z = list(map(float,(Line[2::]).split()))
+				verts.append(Vec(x,y,z))
 	
 	
 		for i,Line in enumerate(Lines):
 			
 			if Line.startswith("f"):
-				a,b,c = Line[2::].split()
+				rawindexlist = Line[2::].split()
+				indexlist = []
 	
-				if "//" in Line:			
-					a,_ = a.split("//")
-					b,_ = b.split("//")
-					c,_ = c.split("//")
-	
-				if "/" in Line:			
-					a = a.split("/")[0]
-					b = b.split("/")[0]
-					c = c.split("/")[0]
-		
-				a,b,c = int(a),int(b),int(c)
-	
-				try:
+				chr = None
+				if "//" in Line:
+					chr = r"//"
+				if "/" in Line:
+					chr = r"/"
+				
+				if chr:
+					for rawindex in rawindexlist:				
+						indexlist.append(int(rawindex.split(chr)[0]))
+				else:
+					indexlist = list(map(int, rawindexlist))
+
+
+				if len(indexlist) ==3:
+					a,b,c = indexlist
 					if norm == -1:
-						tris.append(Triangle(verts[a-1],verts[c-1],verts[b-1]))
-					else:
-						tris.append(Triangle(verts[a-1],verts[b-1],verts[c-1]))
-						
-				except IndexError:
-					ctr += i
-	
-		if ctr: print("faulty",ctr)			
+						b,c = c,b
+					tris.append(Triangle(verts[a-1],verts[b-1],verts[c-1]))			
+
+				if len(indexlist) ==4:
+					a,b,c,d = indexlist
+					temp = c
+					if norm == -1:
+						b,c = c,b
+						temp,d = d,temp
+					tris.append(Triangle(verts[a-1],verts[b-1],verts[c-1]))			
+					tris.append(Triangle(verts[a-1],verts[temp-1],verts[d-1]))		
+
 		return Mesh(tris)	
 	
 
@@ -246,7 +260,7 @@ def Transform(O,Anim,NrmOp,cmra):
 		FinalTris.mat = mt
 
 		#_BackFace_Culling
-		rVec = (cmra.loc - FinalTris.a)
+		rVec = (cmra.loc - FinalTris.center())
 		if NrmOp:
 			if rVec.dot(FinalTris.normal()) > 0:
 				LocTrisDic[FinalTris] = rVec.mag()
@@ -301,13 +315,14 @@ def Shade(T,L,C):
 	
 	#dif
 	LAtten = 1
-	if L.typ == "DIRX":
-		DiffConst = ( (TNor).dot((-L.dirx).normalize()) )
 
-	elif L.typ == "POINT":
+	if L.typ:
 		LVec = L.loc - T.center()
 		LAtten = 1/(4*pi*LVec.magsq())		
-		DiffConst = (TNor).dot(LVec.normalize())
+	else:
+		LVec = -L.dirx
+
+	DiffConst = ( (TNor).dot(LVec.normalize()) )
 
 	if DiffConst > 0:
 		RetCol = T.mat.color*(DiffConst*min(L.power,L.power*LAtten))
@@ -316,17 +331,10 @@ def Shade(T,L,C):
 
 		#spec
 		if T.mat.spec:
-			if L.typ == "DIRX":
-				lv = -L.dirx
-				H = ((C.loc-T.a)+lv).normalize()
-			elif L.typ =="POINT":
-				lv = L.loc-T.a
-				H = ((C.loc-T.a)+lv).normalize()
-			
-
+			H = ((C.loc-T.center())+LVec).normalize()
 			SpecConst = (H.dot(TNor))**150
 			if SpecConst >0:
-				RetCol += L.color*SpecConst
+				RetCol += LCor*SpecConst
 	return RetCol
 
 
@@ -432,6 +440,9 @@ def Render(PG,UserScene,RotAn):
 			RastT += (tRen2 - tPrj2)
 		t2 = time()
 
+		#_Extra__
+		PG.draw.line(Surface,(255,0,0), (0,OY),(2*OX,OY), 1)
+		PG.draw.line(Surface,(0,255,0), (OX,0),(OX,2*OY), 1)
 
 		#__PERFORMANCE__
 		tt = (t2-t1)
@@ -446,8 +457,8 @@ def Render(PG,UserScene,RotAn):
 		fpsLab = myfont.render(f"{ttris}Tri  {fps}fps  {round((tt*100),2)}:Elapsed", 1, (255,255,0))
 		timerLab = myfont.render(f"{TransT}:Transform  {tPrj}:Projection  {tLgt}:Lighting  {RastT}:Rendering", 1, (255,255,0))	
 		
-		Surface.blit(fpsLab, (20, Sze[1]-220))
-		Surface.blit(timerLab, (20, Sze[1]-200))
+		Surface.blit(fpsLab, (20, Sze[1]-40))
+		Surface.blit(timerLab, (20, Sze[1]-20))
 		
 		Display.update()
 
