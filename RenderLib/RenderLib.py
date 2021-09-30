@@ -116,10 +116,10 @@ class Mesh:
 		self.mat = Material(Color(1,1,1))
 		
 		self.Rotation = [0,0,0]
-		self.Scale = [1,1,1]
+		self.Scale = Vec(1,1,1)
 		
-		self.PreTranslate = [0,0,0]
-		self.Translate = [0,0,6]
+		self.PreTranslate = Vec(0,0,0)
+		self.Translate = Vec(0,0,6)
 	
 	@staticmethod
 	def LoadMesh(path,norm=1):
@@ -227,11 +227,9 @@ def Transform(O,Anim,NrmOp,cmra):
 	RotATup[1] += Anim[1]
 	RotATup[2] += Anim[2]
 	
-	sx,sy,sz = O.Scale
-	PreTrV = Vec(O.PreTranslate[0],
-				O.PreTranslate[1],
-				O.PreTranslate[2])
-	tx,ty,tz = O.Translate		
+	sx,sy,sz = O.Scale.i,O.Scale.j,O.Scale.k
+	PreTrV = O.PreTranslate
+	tx,ty,tz = O.Translate.i,O.Translate.j,O.Translate.k		
 	r1,r2,r3 = RotMatrixGen(RotATup)
 	LocTrisDic = {}
 	mt = O.mat
@@ -454,5 +452,4 @@ def Render(PG,UserScene,RotAn):
 		Display.update()
 
 #		break
-
 
